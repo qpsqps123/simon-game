@@ -4,48 +4,50 @@ let userClickedPattern = [];
 let gamePattern = [];
 
 let level = 0;
-let started = false; 
+let started = false;
 
-$(document).keydown(function(){
+$(document).keydown(function () {
   if (!started) {
     $("#level-title").text("Level " + level);
-    nextSquence();  
+    nextSquence();
     started = true;
   }
 });
 
-$(".btn").click(function (){
-  
+$(document).click(function () {
+  if (!started) {
+    $("#level-title").text("Level " + level);
+    nextSquence();
+    started = true;
+  }
+});
+
+$(".btn").click(function (e) {
+  e.stopPropagation();
   let userChosenColor = this.id;
   userClickedPattern.push(userChosenColor);
-  
+
   playSound(this.id);
   animatePress(this.id);
-  checkAnswer(userClickedPattern.length-1);
-
-})
+  checkAnswer(userClickedPattern.length - 1);
+});
 
 function checkAnswer(currentLevel) {
-
   if (userClickedPattern[currentLevel] === gamePattern[currentLevel]) {
-
     console.log("right! (-: well done.");
 
     if (userClickedPattern.length === gamePattern.length) {
-
       setTimeout(() => {
         userClickedPattern = [];
         nextSquence();
       }, 1000);
-
     }
   } else {
-
     console.log("wrong...! Try again!");
     playSound("wrong");
-    $("#level-title").text("Game Over, Press Any Key to Restart")
+    $("#level-title").text("Game Over, Press Any Key to Restart");
 
-    $("body").addClass("game-over");    
+    $("body").addClass("game-over");
 
     setTimeout(() => {
       $("body").removeClass("game-over");
@@ -55,26 +57,24 @@ function checkAnswer(currentLevel) {
   }
 }
 
-function startOver(){
-
+function startOver() {
   gamePattern = [];
   userClickedPattern = [];
-  
+
   level = 0;
   started = false;
 }
 
 function nextSquence() {
-
   level++;
 
   $("#level-title").text("Level " + level);
-  
+
   function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min; //최댓값도 포함, 최솟값도 포함
-  };
+  }
 
   const randomNumber = getRandomIntInclusive(0, 3);
 
@@ -82,10 +82,12 @@ function nextSquence() {
 
   gamePattern.push(randomChosenColor);
 
-  $("#" + randomChosenColor).fadeOut(100).addClass("." + randomChosenColor).fadeIn(100);
+  $("#" + randomChosenColor)
+    .fadeOut(100)
+    .addClass("." + randomChosenColor)
+    .fadeIn(100);
 
   playSound(randomChosenColor);
-
 }
 
 function playSound(name) {
